@@ -44,6 +44,7 @@ public class MazeGenerator : MonoBehaviour
     private List<Transform> entryPoints = new List<Transform>();
     private Transform validEntryPoint;
     public GameObject goalPrefab; // Prefab for the goal
+    public Transform PP;
 
     public GameObject playerPrefab; // Prefab for player
     public Vector3 playerOffset; // Offset for player position
@@ -220,14 +221,14 @@ public class MazeGenerator : MonoBehaviour
             }
 
             RemoveWallForEntryPoint(cellPosition.x, cellPosition.y);
-            GameObject entryPoint = Instantiate(entryPointPrefab, position, Quaternion.identity);
+            GameObject entryPoint = Instantiate(entryPointPrefab, position, Quaternion.identity, PP);
             entryPoints.Add(entryPoint.transform);
             spawnedObjects.Add(entryPoint); // Track spawned objects
         }
 
         // Set the valid entry point
         Vector3 validPosition = new Vector3(validEntryPosition.x, 0, validEntryPosition.y) + mazeOffset;
-        validEntryPoint = Instantiate(entryPointPrefab, validPosition, Quaternion.identity).transform;
+        validEntryPoint = Instantiate(entryPointPrefab, validPosition, Quaternion.identity, PP).transform;
         RemoveWallForEntryPoint(validEntryPosition.x, validEntryPosition.y);
         validEntryPoint.name = "validEntryPoint";
         spawnedObjects.Add(validEntryPoint.gameObject); // Track spawned objects
@@ -325,7 +326,8 @@ public class MazeGenerator : MonoBehaviour
     private void CreateGoal()
     {
         Vector3 centerPosition = new Vector3(mazeWidth / 2, 0, mazeHeight / 2) + new Vector3(-mazeWidth / 2f, 0, -mazeHeight / 2f);
-        GameObject goal = Instantiate(goalPrefab, centerPosition, Quaternion.identity);
+        GameObject goal = Instantiate(goalPrefab, centerPosition, Quaternion.identity, PP);
+        goal.name = "Center Goal";
         spawnedObjects.Add(goal); // Track spawned objects
     }
 
@@ -359,7 +361,7 @@ public class MazeGenerator : MonoBehaviour
                 playerPosition += new Vector3(-1, 0, 0) + playerOffset; // Move the player left
             }
 
-            GameObject player = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+            GameObject player = Instantiate(playerPrefab, playerPosition, Quaternion.identity, PP);
             GameObject cell = Instantiate(cellFloorPrefab, playerPosition - playerOffset * 2, Quaternion.identity, transform);
             spawnedObjects.Add(player); // Track spawned objects
             spawnedObjects.Add(cell); // Track spawned objects
@@ -386,7 +388,7 @@ public class MazeGenerator : MonoBehaviour
             validPlayerPosition += new Vector3(-1, 0, 0) + playerOffset; // Move the player left
         }
 
-        GameObject validPlayer = Instantiate(playerPrefab, validPlayerPosition, Quaternion.identity);
+        GameObject validPlayer = Instantiate(playerPrefab, validPlayerPosition, Quaternion.identity, PP);
         spawnedObjects.Add(validPlayer); // Track spawned objects
     }
 
