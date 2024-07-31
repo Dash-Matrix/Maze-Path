@@ -5,21 +5,24 @@ using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public Transform targetPosition; // Set this in the Inspector or programmatically
+    public int ID;
 
-    private NavMeshAgent navMeshAgent;
+    public NavMeshAgent navMeshAgent;
 
-    void Start()
+    private LevelManager lm;
+
+    void Awake()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        MoveToTargetPosition();
+        gameObject.SetActive(false);
     }
 
-    void MoveToTargetPosition()
+    public void MoveToTargetPosition(LevelManager LM)
     {
-        if (targetPosition != null)
+        lm = LM;
+
+        if (lm.target != null)
         {
-            navMeshAgent.SetDestination(targetPosition.position);
+            navMeshAgent.SetDestination(lm.target.position);
         }
         else
         {
@@ -27,4 +30,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "WinArea")
+        {
+            lm.CheckWin(ID);
+        }
+    }
 }

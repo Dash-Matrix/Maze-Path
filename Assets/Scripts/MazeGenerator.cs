@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PriorityQueue<T>
 {
@@ -33,6 +34,8 @@ public class PriorityQueue<T>
 public class MazeGenerator : MonoBehaviour
 {
     public static MazeGenerator Instance;
+
+    public LevelManager level;
 
     public int mazeWidth, mazeHeight;
     public GameObject cellPrefab;
@@ -327,6 +330,7 @@ public class MazeGenerator : MonoBehaviour
     {
         Vector3 centerPosition = new Vector3(mazeWidth / 2, 0, mazeHeight / 2) + new Vector3(-mazeWidth / 2f, 0, -mazeHeight / 2f);
         GameObject goal = Instantiate(goalPrefab, centerPosition, Quaternion.identity, PP);
+        level.target = goal.transform;
         goal.name = "Center Goal";
         spawnedObjects.Add(goal); // Track spawned objects
     }
@@ -335,7 +339,7 @@ public class MazeGenerator : MonoBehaviour
     private void SpawnPlayers()
     {
         Vector3 mazeOffset = new Vector3(-mazeWidth / 2f, 0, -mazeHeight / 2f);
-
+        int ids = 0;
         // Spawn players at all entry points
         foreach (Transform entry in entryPoints)
         {
@@ -362,11 +366,17 @@ public class MazeGenerator : MonoBehaviour
             }
 
             GameObject player = Instantiate(playerPrefab, playerPosition, Quaternion.identity, PP);
+            player.GetComponent<PlayerMovement>().ID = ids;
             GameObject cell = Instantiate(cellFloorPrefab, playerPosition - playerOffset * 2, Quaternion.identity, transform);
+            cell.GetComponent<MazeCell>().SetNumber(ids);
             spawnedObjects.Add(player); // Track spawned objects
             spawnedObjects.Add(cell); // Track spawned objects
+
+            ids++;
         }
 
+
+        /*
         // Spawn player at the valid entry point
         Vector3 validPlayerPosition = validEntryPoint.position + playerOffset;
 
@@ -390,6 +400,8 @@ public class MazeGenerator : MonoBehaviour
 
         GameObject validPlayer = Instantiate(playerPrefab, validPlayerPosition, Quaternion.identity, PP);
         spawnedObjects.Add(validPlayer); // Track spawned objects
+
+        */
     }
 
 
